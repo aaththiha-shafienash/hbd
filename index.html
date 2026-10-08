@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#fff7fb" />
+  <title>A Little Friendship Story </title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Georgia, "Times New Roman", serif;
+      color: #3f3340;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(255,255,255,.95), transparent 28%),
+        radial-gradient(circle at 90% 15%, rgba(255,226,239,.7), transparent 30%),
+        linear-gradient(135deg, #fff9fc, #f8f2ff 50%, #fff8ef);
+      overflow-x: hidden;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page.active {
+      display: flex;
+    }
+
+    /* ---------- FIRST PAGE ---------- */
+    #page1 {
+      align-items: center;
+      justify-content: center;
+      padding: 28px 16px 42px;
+    }
+
+    .school-doodles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .doodle {
+      position: absolute;
+      font-family: Arial, sans-serif;
+      opacity: .16;
+      animation: float 5s ease-in-out infinite;
+      user-select: none;
+    }
+
+    .d1 { top: 7%; left: 5%; font-size: 42px; }
+    .d2 { top: 13%; right: 7%; font-size: 40px; animation-delay: .8s; }
+    .d3 { bottom: 13%; left: 7%; font-size: 35px; animation-delay: 1.4s; }
+    .d4 { bottom: 8%; right: 8%; font-size: 44px; animation-delay: .4s; }
+    .d5 { top: 45%; left: 2%; font-size: 28px; animation-delay: 2s; }
+    .d6 { top: 55%; right: 2%; font-size: 28px; animation-delay: 1s; }
+
+    .card {
+      width: min(880px, 100%);
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: clamp(18px, 4vw, 34px);
+      border: 1px solid rgba(255,255,255,.9);
+      border-radius: 30px;
+      background: rgba(255,255,255,.72);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 22px 70px rgba(102, 67, 92, .16);
+      animation: cardIn 1s ease both;
+    }
+
+    .mini-title {
+      margin: 0 0 16px;
+      font-family: Arial, sans-serif;
+      font-size: clamp(11px, 2vw, 14px);
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: #a56d91;
+    }
+
+    .image-frame {
+      width: min(570px, 100%);
+      margin: 0 auto 22px;
+      padding: 8px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #ffffff, #f2dbea, #fff);
+      box-shadow: 0 15px 40px rgba(86, 58, 78, .17);
+    }
+
+    .image-frame img {
+      display: block;
+      width: 100%;
+      max-height: 68vh;
+      object-fit: cover;
+      object-position: center;
+      border-radius: 18px;
+    }
+
+    .opening-line {
+      margin: 0 auto;
+      max-width: 740px;
+      font-size: clamp(19px, 3vw, 27px);
+      line-height: 1.55;
+      font-style: italic;
+      color: #594151;
+    }
+
+    .heart {
+      display: inline-block;
+      margin-top: 12px;
+      font-size: 24px;
+      animation: heartbeat 1.6s infinite;
+    }
+
+    .more-btn {
+      margin-top: 25px;
+      border: 0;
+      border-radius: 999px;
+      padding: 14px 25px;
+      color: white;
+      background: linear-gradient(135deg, #b8759b, #8f6fae);
+      box-shadow: 0 9px 22px rgba(143,111,174,.28);
+      cursor: pointer;
+      font-family: Arial, sans-serif;
+      font-weight: 700;
+      letter-spacing: .03em;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .more-btn:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 13px 28px rgba(143,111,174,.36);
+    }
+
+    .more-btn:active {
+      transform: scale(.97);
+    }
+
+    /* ---------- SECOND PAGE ---------- */
+    #page2 {
+      display: none;
+      justify-content: center;
+      padding: 55px 16px 70px;
+    }
+
+    #page2.active {
+      display: block;
+    }
+
+    .story-wrap {
+      width: min(850px, 100%);
+      margin: auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    .story-header {
+      text-align: center;
+      margin-bottom: 34px;
+      animation: cardIn 1s ease both;
+    }
+
+    .story-header .school-icon {
+      font-size: 40px;
+    }
+
+    .story-header h1 {
+      margin: 8px 0;
+      font-size: clamp(31px, 7vw, 55px);
+      color: #744d68;
+    }
+
+    .story-header p {
+      margin: 0;
+      color: #9a718c;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .story {
+      background: rgba(255,255,255,.78);
+      border: 1px solid rgba(255,255,255,.95);
+      border-radius: 28px;
+      padding: clamp(23px, 5vw, 48px);
+      box-shadow: 0 22px 65px rgba(100, 67, 91, .13);
+      backdrop-filter: blur(10px);
+      animation: storyIn 1s .15s ease both;
+    }
+
+    .story p {
+      margin: 0 0 22px;
+      font-size: clamp(16px, 2.5vw, 19px);
+      line-height: 1.85;
+    }
+
+    .story p:last-child {
+      margin-bottom: 0;
+    }
+
+    .special-line {
+      text-align: center;
+      font-weight: bold;
+      font-style: italic;
+      color: #8d5577;
+      font-size: clamp(18px, 3vw, 23px) !important;
+      margin: 28px 0 5px !important;
+    }
+
+    .ending {
+      text-align: center;
+      margin-top: 32px;
+      padding-top: 28px;
+      border-top: 1px dashed #d9b9cb;
+    }
+
+    .ending .birthday {
+      font-size: clamp(24px, 5vw, 36px);
+      font-weight: bold;
+      color: #7b4f6b;
+      margin-bottom: 8px;
+    }
+
+    .ending .from {
+      font-family: Arial, sans-serif;
+      color: #a06d89;
+      font-size: 14px;
+      letter-spacing: .06em;
+    }
+
+    .back-btn {
+      display: block;
+      margin: 25px auto 0;
+      border: 1px solid #d7b4c9;
+      background: rgba(255,255,255,.75);
+      color: #80576f;
+      border-radius: 999px;
+      padding: 10px 18px;
+      cursor: pointer;
+      font-family: Arial, sans-serif;
+    }
+
+    /* ---------- CONFETTI ---------- */
+    .confetti {
+      position: fixed;
+      top: -18px;
+      width: 9px;
+      height: 14px;
+      z-index: 20;
+      pointer-events: none;
+      animation: fall linear forwards;
+    }
+
+    /* ---------- FLOATING SCHOOL ELEMENTS ---------- */
+    .floating {
+      position: fixed;
+      z-index: 1;
+      pointer-events: none;
+      opacity: .18;
+      animation: float 6s ease-in-out infinite;
+      font-size: 27px;
+    }
+
+    .f1 { top: 10%; left: 3%; }
+    .f2 { top: 26%; right: 4%; animation-delay: 1s; }
+    .f3 { bottom: 18%; left: 4%; animation-delay: 2s; }
+    .f4 { bottom: 7%; right: 4%; animation-delay: .5s; }
+
+    @keyframes fall {
+      0% {
+        transform: translate3d(0, -20px, 0) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translate3d(var(--drift), 110vh, 0) rotate(720deg);
+        opacity: .1;
+      }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(-2deg); }
+      50% { transform: translateY(-12px) rotate(3deg); }
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      15% { transform: scale(1.2); }
+      30% { transform: scale(1); }
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(28px) scale(.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes storyIn {
+      from { opacity: 0; transform: translateY(35px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      #page1 {
+        padding: 16px 11px 30px;
+      }
+
+      .card {
+        border-radius: 23px;
+        padding: 13px 12px 22px;
+      }
+
+      .image-frame {
+        padding: 5px;
+        border-radius: 18px;
+      }
+
+      .image-frame img {
+        max-height: 64vh;
+        border-radius: 14px;
+      }
+
+      .opening-line {
+        font-size: 18px;
+        line-height: 1.5;
+        padding: 0 4px;
+      }
+
+      .more-btn {
+        width: 90%;
+        padding: 14px 15px;
+      }
+
+      #page2 {
+        padding: 30px 11px 45px;
+      }
+
+      .story {
+        border-radius: 22px;
+        padding: 22px 18px;
+      }
+
+      .story p {
+        font-size: 16px;
+        line-height: 1.75;
+        text-align: left;
+      }
+
+      .doodle {
+        opacity: .10;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Decorative school elements -->
+  <div class="floating f1">📚</div>
+  <div class="floating f2">✏️</div>
+  <div class="floating f3">🎒</div>
+  <div class="floating f4">⭐</div>
+
+  <!-- PAGE 1 -->
+  <section id="page1" class="page active">
+    <div class="school-doodles">
+      <div class="doodle d1">📚</div>
+      <div class="doodle d2">✏️</div>
+      <div class="doodle d3">🎒</div>
+      <div class="doodle d4">⭐</div>
+      <div class="doodle d5">💖</div>
+      <div class="doodle d6">📖</div>
+    </div>
+
+    <main class="card">
+      <p class="mini-title">A little story about a beautiful friendship</p>
+
+      <div class="image-frame">
+        <img src="akthas.jpeg" alt="Two school friends standing together" />
+      </div>
+
+      <p class="opening-line">
+        “This friendship, to show how truly special it is, is a quiet song
+        that echoes in every moment we share.”
+      </p>
+
+      <div class="heart">❤️</div>
+
+      <br />
+
+      <button class="more-btn" onclick="openStory()">
+        Click here to read our story ✨
+      </button>
+    </main>
+  </section>
+
+  <!-- PAGE 2 -->
+  <section id="page2" class="page">
+    <main class="story-wrap">
+      <header class="story-header">
+        <div class="school-icon">🎓 📚 ✨</div>
+        <h1>Our Little Story</h1>
+        <p>From a classroom to a collection of memories</p>
+      </header>
+
+      <article class="story">
+        <p>
+          It all started in the last row of a classroom, where a boy and a girl
+          sat on opposite sides, yet somehow found a reason to talk all day.
+          Between classes, lessons, laughter, and all the little things in
+          between, an ordinary classroom slowly became the beginning of a
+          beautiful friendship.
+        </p>
+
+        <p>
+          Soon, sharing Mentos became one of their little things. Sometimes she
+          would offer him a handful, and whenever there were only two pieces
+          left in a packet, they would simply take one each and share it
+          without even thinking twice. Somehow, even the smallest things became
+          memories.
+        </p>
+
+        <p>
+          Their conversations slowly became a story of their own. Their chat
+          was filled with endless messages, random conversations, and
+          ridiculously long audio notes—so long that even a one-hour voice note
+          somehow felt completely normal between them. They could talk about
+          almost anything and still somehow have something more to say.
+        </p>
+
+        <p>
+          Then came the earphones.
+        </p>
+
+        <p>
+          He gifted her a pair of earphones, and for her, they became so much
+          more than just earphones. They became something special, something she
+          valued deeply and kept safely like a little piece of their friendship.
+          Out of all the things she could have received, this became one of
+          those gifts that quietly meant the most.
+        </p>
+
+        <p>
+          At school, they would meet in the corridors, casually talking while
+          he carried his Siddalebbe bottle. He knew she hated the smell, which
+          made it even more fun for him to annoy her with it. But the funniest
+          part was that he actually brought that bottle all the way from home to
+          school. Somehow, even his little ways of annoying her became memories
+          she would laugh about later.
+        </p>
+
+        <p>
+          Then came the time after O/Ls.
+        </p>
+
+        <p>
+          Their friendship didn’t end with school. Somehow, life kept finding
+          ways to put them in the same places. They went to the same classes for
+          A/Ls, and he even became her teacher in P6. Different classrooms,
+          different stages of life, but somehow the same friendship continued
+          through all of them.
+        </p>
+
+        <p>
+          There were study moments too. When she was out of town, he would sit
+          down and write notes in her exercise book for her. It was such a simple
+          thing, but it was the kind of help that showed how naturally they
+          looked out for each other.
+        </p>
+
+        <p>
+          And then there was the selfie.
+        </p>
+
+        <p>
+          For the longest time, taking a picture with him had been something she
+          had wished for since her school days. So when it finally happened, it
+          wasn’t just another selfie. It was one of those small wishes that had
+          quietly waited for the right moment to come true.
+        </p>
+
+        <p>
+          Then came the carefree days—the kind where they would simply run
+          together along a long path, laughing and enjoying the moment, all
+          because they wanted to go get some ice cream. Nothing complicated. No
+          special plan. Just two friends having fun and making another memory out
+          of an ordinary day.
+        </p>
+
+        <p>
+          Whenever she wanted a photograph, he somehow became the photographer.
+          He would stand behind the camera, making sure she got the picture she
+          wanted, while another little memory was quietly added to their
+          collection.
+        </p>
+
+        <p>
+          And then there was the escalator.
+        </p>
+
+        <p>
+          She was scared, and he was there to help her get through it. Of
+          course, he didn’t miss the chance to make fun of her while doing it.
+          That was just how their friendship worked—helping each other while
+          never letting the other person live down their embarrassing moments.
+        </p>
+
+        <p>
+          Looking back, none of these moments were extraordinary on their own.
+        </p>
+
+        <p>
+          A packet of Mentos.<br>
+          A long voice note.<br>
+          A pair of earphones.<br>
+          A silly bottle brought from home.<br>
+          A few notes written in an exercise book.<br>
+          A selfie they had waited years to take.<br>
+          An ice cream run.<br>
+          A photograph.<br>
+          A scary escalator ride.
+        </p>
+
+        <p class="special-line">
+          Just ordinary little moments.
+        </p>
+
+        <p class="special-line">
+          But that is what made the friendship special,
+        </p>
+
+        <p>
+          and how that simple friendship became a collection of memories worth
+          keeping forever.
+        </p>
+
+        <div class="ending">
+          <div class="birthday">Happiest twenty-one </div>
+          <div class="from">MY BEST FRIEND ❤️</div>
+        </div>
+      </article>
+
+      <button class="back-btn" onclick="goBack()">← Back to the beginning</button>
+    </main>
+  </section>
+
+  <script>
+    function createConfetti(amount = 90) {
+      const symbols = ["●", "■", "★", "✦", "◆"];
+      const pieces = [];
+
+      for (let i = 0; i < amount; i++) {
+        const piece = document.createElement("div");
+        piece.className = "confetti";
+
+        const size = Math.random() * 7 + 5;
+        piece.style.left = Math.random() * 100 + "vw";
+        piece.style.width = size + "px";
+        piece.style.height = size * 1.45 + "px";
+        piece.style.background = `hsl(${Math.random() * 360}, 70%, 70%)`;
+        piece.style.borderRadius = Math.random() > .5 ? "50%" : "2px";
+        piece.style.setProperty("--drift", (Math.random() * 220 - 110) + "px");
+        piece.style.animationDuration = (Math.random() * 2.8 + 3.2) + "s";
+        piece.style.animationDelay = (Math.random() * .7) + "s";
+
+        if (Math.random() > .65) {
+          piece.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+          piece.style.background = "transparent";
+          piece.style.color = `hsl(${Math.random() * 360}, 70%, 62%)`;
+          piece.style.fontSize = size + "px";
+          piece.style.height = "auto";
+        }
+
+        document.body.appendChild(piece);
+        pieces.push(piece);
+      }
+
+      setTimeout(() => {
+        pieces.forEach(p => p.remove());
+      }, 7000);
+    }
+
+    function openStory() {
+      document.getElementById("page1").classList.remove("active");
+      document.getElementById("page2").classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      createConfetti(110);
+    }
+
+    function goBack() {
+      document.getElementById("page2").classList.remove("active");
+      document.getElementById("page1").classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // A small celebration when the first page loads.
+    window.addEventListener("load", () => {
+      setTimeout(() => createConfetti(45), 500);
+    });
+  </script>
+</body>
+</html>
